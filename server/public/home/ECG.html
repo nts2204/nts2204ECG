@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="es">
+
+<head>
+  <script src="./plotly.min.js"></script>
+  <meta charset="UTF-8">
+  <title>nts2204ECG</title>
+  <link rel="stylesheet" href="estilos.css">
+</head>
+
+<body>
+  <br><br><br><br>
+  <h1>
+    <p style="color: white;">
+      Electrocardiogram
+    </p>
+  </h1>
+  <br>
+  <div id="chart"></div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"></script>
+  <script>
+    var socket = io.connect('http://localhost:5000/', { 'forceNew': true });
+    dat = 0;
+    socket.on('broadcast', function (data) {
+      console.log("data: " + data);
+      dat = data;
+    });
+    
+    console.log("test");
+    socket.on('connect', () => {
+      console.log('Connected to the server!');
+    });
+
+    socket.on('disconnect', () => {
+      console.log('Disconnected from the server');
+    })
+
+
+    function getData() {
+      return Math.random();
+    }
+    Plotly.newPlot('chart', [{
+      // y:[dat],
+      y: [dat],
+      type: 'line'
+    }]);
+
+    var cnt = 0;
+
+    setInterval(function () {
+      Plotly.extendTraces('chart', { y: [[dat]] }, [0]);
+      cnt++;
+      if (cnt > 0) {
+        Plotly.relayout('chart', {
+          xaxis: {
+            range: [cnt - 500, cnt]
+          }
+        });
+      }
+    }, 15);
+  </script>
+
+  <header class="header">
+    <div class="container">
+      <div class="btn-menu">
+        <label for="btn-menu">☰</label>
+      </div>
+      <div class="logo">
+        <h1>Menu</h1>
+      </div>
+      <nav class="menu">
+        <a href="./index.html">Begin</a>
+        <a href="./contacto.html">Contact</a>
+        <a href="#" id="logout">logout</a>
+      </nav>
+    </div>
+  </header>
+  <div class="capa"></div>
+  <!--	--------------->
+  <input type="checkbox" id="btn-menu">
+  <div class="container-menu">
+    <div class="cont-menu">
+      <nav>
+        <a href="./ECG.html">ECG</a>
+        <a href="./hardware.html">Hardware</a>
+      </nav>
+      <label for="btn-menu">✖️</label>
+    </div>
+  </div>
+
+
+</body>
+
+<script type="module">
+  // Import the functions from the SDK
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
+  import { getDatabase, set, ref, update } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
+  import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js";
+
+  // App Firebase configuration
+  const firebaseConfig = {
+    apiKey: "AIzaSyDG1pGam51g_vjf_NyFUS-a57XrTDvmovA",
+    authDomain: "nts2204-413e3.firebaseapp.com",
+    databaseURL: "https://nts2204-413e3-default-rtdb.firebaseio.com",
+    projectId: "nts2204-413e3",
+    storageBucket: "nts2204-413e3.appspot.com",
+    messagingSenderId: "459615336139",
+    appId: "1:459615336139:web:0696f7447c3b080eb94d4e"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const database = getDatabase(app);
+  const auth = getAuth();
+
+  const btnSalir = document.getElementById("logout");
+
+  btnSalir.addEventListener('click', (e) => {
+    e.preventDefault()
+    signOut(auth).then(() => {
+    }).catch((error) => {
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      //alert(errorMessage);
+    });
+  })
+
+
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      // User is signed in
+      const uid = user.uid;
+    } else {
+      // User is signed out
+      alert("Signed out");
+      location.href = "../index.html";
+    }
+  });
+</script>
+
+</html>

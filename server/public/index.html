@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>nts2204ECG</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+<body>
+    <form action="">
+
+        <h1 class="title">Welcome</h1>
+
+        <label>
+            <i class="fa-solid fa-envelope"></i>
+            <input placeholder="Email" type="text" id="email">
+        </label>
+
+        <label>
+            <i class="fa-solid fa-lock"></i>
+            <input placeholder="password" type="password" id="password">
+        </label>
+
+        <button id="button">sign in</button>
+        <button class="registro" id="btnRegistro">Register</button>
+    </form>
+</body>
+<script type="module">
+    // Import the functions from the SDKs 
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
+    import { getDatabase, set, ref, update } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js";
+  
+    // App's Firebase configuration
+    const firebaseConfig = {
+    apiKey: "AIzaSyDG1pGam51g_vjf_NyFUS-a57XrTDvmovA",
+    authDomain: "nts2204-413e3.firebaseapp.com",
+    databaseURL: "https://nts2204-413e3-default-rtdb.firebaseio.com",
+    projectId: "nts2204-413e3",
+    storageBucket: "nts2204-413e3.appspot.com",
+    messagingSenderId: "459615336139",
+    appId: "1:459615336139:web:0696f7447c3b080eb94d4e"
+  };
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const database = getDatabase(app);
+    const auth = getAuth();
+
+    const button = document.getElementById('button');
+    const btnRegistro = document.getElementById('btnRegistro');
+
+    button.addEventListener('click', (e) => {
+        e.preventDefault()
+
+        var email = document.getElementById('email').value;
+        var password = document.getElementById('password').value;
+
+        signInWithEmailAndPassword(auth, email, password)
+            .then((userCredential) => {
+                // Signed in 
+                const user = userCredential.user;
+
+                const dt = new Date();
+                update(ref(database, 'users/' + user.uid),{
+                    last_login: dt,
+                })
+                alert("Login Successfully!");
+                location.href = "./home";
+                // ...
+            })
+            .catch((error) => {
+                const errorCode = error.code;
+                const errorMessage = error.message;
+                alert(errorMessage);
+            });
+    })
+    btnRegistro.addEventListener('click', (e) => {
+        e.preventDefault()
+        location.href = "./registro.html";
+    })
+  </script>
+</html>
